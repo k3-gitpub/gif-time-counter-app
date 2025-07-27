@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>GIF情報カウンター (フェーズ3)</title>
+    <!-- 外部CSSファイルを読み込む -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>GIF情報カウンター</h1>
+        <p>解析したいGIFファイルをアップロードしてください。</p>
+        
+        <!-- Flaskからのメッセージ（flash）を表示するエリア -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- ファイルアップロード用のフォーム -->
+        <form id="upload-form" method="post" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <input type="file" name="file" id="file-input" accept=".gif" required>
+                <span class="file-upload-label">ファイルを選択...</span>
+                <span id="file-name-display" class="file-name">選択されていません</span>
+            </div>
+            
+            <div class="submit-wrapper">
+                <input type="submit" id="submit-button" value="アップロードして解析">
+                <div id="loader" class="loader" style="display: none;"></div>
+            </div>
+            <p class="privacy-note">アップロードされたファイルは解析処理の完了後、サーバーから自動的に削除されます。</p>
+        </form>
+
+        <!-- 解析結果を表示するエリア -->
+        {% if results %}
+        <div class="results">
+            <h2>解析結果: {{ results.filename }}</h2>
+            <ul>
+                <li><span>再生時間:</span> <strong>{{ results.duration }} 秒</strong></li>
+                <li><span>フレーム数:</span> <strong>{{ results.frames }} 枚</strong></li>
+                <li><span>平均FPS:</span> <strong>{{ results.fps }}</strong></li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+        <footer>
+        <p>
+            &copy; 2025 k3. All Rights Reserved.
+        </p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const uploadForm = document.getElementById('upload-form');
+        const submitButton = document.getElementById('submit-button');
+        const loader = document.getElementById('loader');
+
+        fileInput.addEventListener('change', () => {
+            fileNameDisplay.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : '選択されていません';
+        });
+
+        uploadForm.addEventListener('submit', () => {
+            if (fileInput.files.length > 0) {
+                submitButton.value = '解析中...';
+                submitButton.disabled = true;
+                loader.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
