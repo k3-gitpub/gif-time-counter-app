@@ -18,6 +18,11 @@ app.config['SECRET_KEY'] = 'a_very_secret_key_for_flash_messages'
 # アップロードされるファイルの最大サイズ（例: 16MB）
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
+# --- 'uploads' フォルダの作成 ---
+# アプリケーションの起動時にuploadsフォルダが存在するか確認し、なければ作成する
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 # --- ヘルパー関数 ---
 def allowed_file(filename):
     """アップロードされたファイルが許可された拡張子かチェックする"""
@@ -101,7 +106,4 @@ def upload_file():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    # 'uploads' フォルダがなければ作成する
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
     app.run(debug=True) # debug=True は開発中のみ使用します
